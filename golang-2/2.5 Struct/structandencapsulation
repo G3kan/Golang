@@ -1,0 +1,129 @@
+// Package main, Go dilinde struct ve encapsulation (kapsülleme) kavramlarını
+// örneklerle açıklayan bir uygulamadır. Struct'ların tanımlanması ve kullanımı
+// ile getter ve setter metodları üzerinden kapsülleme gösterilmektedir.
+package main
+
+import (
+	"fmt" // fmt paketi, formatlı giriş/çıkış işlemleri için kullanılır.
+)
+
+// Person struct, Go dilinde basit bir struct örneğidir.
+// Bir kişinin temel bilgilerini (Ad, Soyad, Yaş) tutar.
+type Person struct {
+	FirstName string // FirstName, kişinin adını tutar.
+	LastName  string // LastName, kişinin soyadını tutar.
+	Age       int    // Age, kişinin yaşını tutar.
+}
+
+// Employee struct, Go dilinde encapsulation (kapsülleme) kavramını gösterir.
+// name ve salary gibi özel alanlara sahiptir ve bu alanlara sadece getter
+// ve setter metodları ile erişilebilir.
+type Employee struct {
+	name   string  // name, çalışanın adını tutan özel bir alandır.
+	salary float64 // salary, çalışanın maaşını tutan özel bir alandır.
+}
+
+// GetName, Employee struct'ındaki name alanına erişim sağlayan bir getter metodudur.
+//
+// Dönüş Değeri:
+//   - string: Çalışanın adı.
+func (e *Employee) GetName() string {
+	return e.name
+}
+
+// SetName, Employee struct'ındaki name alanını değiştiren bir setter metodudur.
+//
+// Parametreler:
+//   - name (string): Çalışanın yeni adı.
+func (e *Employee) SetName(name string) {
+	e.name = name
+}
+
+// GetSalary, Employee struct'ındaki salary alanına erişim sağlayan bir getter metodudur.
+//
+// Dönüş Değeri:
+//   - float64: Çalışanın maaşı.
+func (e *Employee) GetSalary() float64 {
+	return e.salary
+}
+
+// SetSalary, Employee struct'ındaki salary alanını değiştiren bir setter metodudur.
+// Negatif maaş değerlerini engellemek için kontrol içerir.
+//
+// Parametreler:
+//   - salary (float64): Çalışanın yeni maaşı.
+func (e *Employee) SetSalary(salary float64) {
+	if salary > 0 {
+		e.salary = salary
+	} else {
+		fmt.Println("Maaş pozitif bir değer olmalıdır!")
+	}
+}
+
+// DisplayInfo, Employee struct'ı için bir receiver methodudur.
+// Çalışanın adını ve maaşını ekrana yazdırır.
+func (e Employee) DisplayInfo() {
+	fmt.Printf("Çalışan Bilgisi - Ad: %s, Maaş: %.2f\n", e.name, e.salary)
+}
+
+// Bu kodda, kapsülleme (encapsulation) kavramı, struct'ların özel alanlarına
+// doğrudan erişimi engelleyerek ve bu alanlara erişim için getter ve setter
+// metodları sağlayarak gösterilmektedir. Getter metodları, özel alanların
+// değerlerini döndürmek için kullanılırken, setter metodları bu alanların
+// değerlerini değiştirmek için kullanılır. Bu yaklaşım, veri bütünlüğünü
+// korumaya ve hatalı veri girişlerini önlemeye yardımcı olur.
+
+// UpdateAge, Person struct'ı için bir receiver methodudur.
+// Kişinin yaşını günceller.
+func (p *Person) UpdateAge(newAge int) {
+	if newAge > 0 {
+		p.Age = newAge
+	} else {
+		fmt.Println("Yaş pozitif bir değer olmalıdır!")
+	}
+}
+
+// FullName, Person struct'ı için bir receiver methodudur.
+// Kişinin tam adını döndürür.
+func (p Person) FullName() string {
+	return p.FirstName + " " + p.LastName
+}
+
+// UpdateName, Person struct'ı için bir pointer receiver methodudur.
+// Kişinin adını günceller.
+func (p *Person) UpdateName(newFirstName, newLastName string) {
+	p.FirstName = newFirstName
+	p.LastName = newLastName
+}
+
+func main() {
+	// Struct kullanımı örneği
+	person := Person{
+		FirstName: "John",
+		LastName:  "Doe",
+		Age:       30,
+	}
+	fmt.Printf("Kişi: %s %s, Yaş: %d\n", person.FirstName, person.LastName, person.Age)
+
+	// Encapsulation (kapsülleme) örneği
+	employee := Employee{}
+	employee.SetName("Alice")
+	employee.SetSalary(5000)
+
+	fmt.Printf("Çalışan Adı: %s, Maaşı: %.2f\n", employee.GetName(), employee.GetSalary())
+
+	// Hatalı maaş set etme denemesi
+	employee.SetSalary(-1000)
+
+	// Çalışan bilgilerini gösterme
+	// DisplayInfo metodunu kullanarak çalışan bilgilerini ekrana yazdırma
+	employee.DisplayInfo()
+
+	// Kapsülleme ile erişim sağlama
+	// employee.name = "Bob" // Bu satır hata verecektir çünkü name alanı özel (private) olarak tanımlanmıştır.
+	// employee.salary = -2000 // Bu satır hata verecektir çünkü salary alanı özel (private) olarak tanımlanmıştır.
+	// employee.DisplayInfo() // Bu satır hata verecektir çünkü DisplayInfo metodu private olarak tanımlanmıştır.
+	// employee.SetName("Bob") // Bu satır hata vermeyecektir çünkü SetName metodu public olarak tanımlanmıştır.
+	// employee.SetSalary(2000) // Bu satır hata vermeyecektir çünkü SetSalary metodu public olarak tanımlanmıştır.
+
+}
